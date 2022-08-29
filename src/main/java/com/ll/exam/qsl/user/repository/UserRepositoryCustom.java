@@ -7,4 +7,5 @@ public interface UserRepositoryCustom {
 
     long getQslCount();
 
+    SiteUser getQslUserOrderByIdAscOne();
 }
