@@ -14,12 +14,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public SiteUser getQslUser(Long id) {
-        /*
-        SELECT *
-        FROM site_user
-        WHERE id = 1
-        */
-
         return jpaQueryFactory
                 .select(siteUser)
                 .from(siteUser)
@@ -41,8 +35,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .select(siteUser)
                 .from(siteUser)
                 .orderBy(siteUser.id.asc())
-                .limit(1)
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override
@@ -54,5 +47,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .fetch();
     }
 
-
+    @Override
+    public List<SiteUser> searchQsl(String kw) {
+        return jpaQueryFactory
+                .select(siteUser)
+                .from(siteUser)
+                .where(
+                        siteUser.username.contains(kw)
+                                .or(siteUser.email.contains(kw))
+                )
+                .orderBy(siteUser.id.desc())
+                .fetch();
+    }
 }
