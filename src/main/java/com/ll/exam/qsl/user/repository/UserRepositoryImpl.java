@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
-import java.util.function.LongSupplier;
 
 import static com.ll.exam.qsl.user.entity.QSiteUser.siteUser;
 
@@ -88,8 +87,14 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
         List<SiteUser> users = usersQuery.fetch();
 
-        LongSupplier totalSupplier = () -> 2;
+        JPAQuery<Long> usersCountQuery = jpaQueryFactory
+                .select(siteUser.count())
+                .from(siteUser)
+                .where(
+                        siteUser.username.contains(kw)
+                                .or(siteUser.email.contains(kw))
+                );
 
-        return PageableExecutionUtils.getPage(users, pageable, totalSupplier);
+        return PageableExecutionUtils.getPage(users, pageable, usersCountQuery::fetchOne);
     }
 }
