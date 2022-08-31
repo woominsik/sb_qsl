@@ -1,6 +1,5 @@
 package com.ll.exam.qsl;
 
-import com.ll.exam.qsl.interestKeyword.entity.InterestKeyword;
 import com.ll.exam.qsl.user.entity.SiteUser;
 import com.ll.exam.qsl.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,7 +141,7 @@ class UserRepositoryTests {
     void t8() {
         long totalCount = userRepository.count();
         int pageSize = 1; // 한 페이지에 보여줄 아이템 개수
-        int totalPages = (int)Math.ceil(totalCount / (double)pageSize);
+        int totalPages = (int) Math.ceil(totalCount / (double) pageSize);
         int page = 1;
         String kw = "user";
 
@@ -173,7 +171,7 @@ class UserRepositoryTests {
     void t9() {
         long totalCount = userRepository.count();
         int pageSize = 1; // 한 페이지에 보여줄 아이템 개수
-        int totalPages = (int)Math.ceil(totalCount / (double)pageSize);
+        int totalPages = (int) Math.ceil(totalCount / (double) pageSize);
         int page = 1;
         String kw = "user";
 
@@ -209,9 +207,6 @@ class UserRepositoryTests {
         u2.addInterestKeywordContent("헬스"); // 중복등록은 무시
 
         userRepository.save(u2);
-        // 엔티티클래스 : InterestKeyword(interest_keyword 테이블)
-        // 중간테이블도 생성되어야 함, 힌트 : @ManyToMany
-        // interest_keyword 테이블에 축구, 롤, 헬스에 해당하는 row 3개 생성
     }
 
     @Test
@@ -230,9 +225,8 @@ class UserRepositoryTests {
     }
 
     @Test
-    @DisplayName("Spring Data JPA 기본, 축구에 관심이 있는 회원들 검색")
+    @DisplayName("no qsl, 축구에 관심이 있는 회원들 검색")
     void t12() {
-
         List<SiteUser> users = userRepository.findByInterestKeywords_content("축구");
 
         assertThat(users.size()).isEqualTo(1);
@@ -243,6 +237,16 @@ class UserRepositoryTests {
         assertThat(u.getUsername()).isEqualTo("user1");
         assertThat(u.getEmail()).isEqualTo("user1@test.com");
         assertThat(u.getPassword()).isEqualTo("{noop}1234");
+    }
 
+    @Test
+    @DisplayName("u2=아이돌, u1=팬 u1은 u2의 팔로워 이다.")
+    void t13() {
+        SiteUser u1 = userRepository.getQslUser(1L);
+        SiteUser u2 = userRepository.getQslUser(2L);
+
+        u2.addFollower(u1);
+
+        userRepository.save(u2);
     }
 }
