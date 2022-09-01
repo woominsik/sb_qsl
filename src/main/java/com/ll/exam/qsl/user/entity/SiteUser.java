@@ -38,7 +38,7 @@ public class SiteUser {
         interestKeywords.add(new InterestKeyword(keywordContent));
     }
 
-    public void follow(SiteUser u2) {
-        u2.getFollowers().add(this);
+    public void follow(SiteUser following) {
+        following.getFollowers().add(this);
     }
 }
