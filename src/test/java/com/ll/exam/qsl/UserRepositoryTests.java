@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -241,11 +242,12 @@ class UserRepositoryTests {
 
     @Test
     @DisplayName("u2=아이돌, u1=팬 u1은 u2의 팔로워 이다.")
+    @Rollback(false)
     void t13() {
         SiteUser u1 = userRepository.getQslUser(1L);
         SiteUser u2 = userRepository.getQslUser(2L);
 
-        u2.addFollower(u1);
+        u1.follow(u2);
 
         userRepository.save(u2);
     }
