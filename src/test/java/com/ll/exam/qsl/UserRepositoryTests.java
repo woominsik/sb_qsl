@@ -1,5 +1,6 @@
 package com.ll.exam.qsl;
 
+import com.ll.exam.qsl.interestKeyword.entity.InterestKeyword;
 import com.ll.exam.qsl.user.entity.SiteUser;
 import com.ll.exam.qsl.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -286,5 +287,18 @@ class UserRepositoryTests {
         // following
         // u2가 구독중인 회원 : 0
         assertThat(u2.getFollowings().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("u1은 더이상 농구에 관심이 없다.")
+    @Rollback(false)
+    void t16() {
+        SiteUser u1 = userRepository.getQslUser(1L);
+
+        u1.removeInterestKeywordContent("농구");
+
+        userRepository.save(u1);
+
+        assertThat(u1.getInterestKeywords()).doesNotContain(new InterestKeyword(u1,"농구"));
     }
 }
