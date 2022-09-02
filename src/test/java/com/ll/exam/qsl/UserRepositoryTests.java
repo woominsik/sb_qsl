@@ -32,19 +32,19 @@ class UserRepositoryTests {
     @Test
     @DisplayName("회원 생성")
     void t1() {
-        SiteUser u3 = SiteUser.builder()
-                .username("user3")
+        SiteUser u9 = SiteUser.builder()
+                .username("user9")
                 .password("{noop}1234")
-                .email("user3@test.com")
+                .email("user9@test.com")
                 .build();
 
-        SiteUser u4 = SiteUser.builder()
-                .username("user4")
+        SiteUser u10 = SiteUser.builder()
+                .username("user10")
                 .password("{noop}1234")
-                .email("user4@test.com")
+                .email("user10@test.com")
                 .build();
 
-        userRepository.saveAll(Arrays.asList(u3, u4));
+        userRepository.saveAll(Arrays.asList(u9, u10));
     }
 
     @Test
@@ -191,9 +191,9 @@ class UserRepositoryTests {
 
         SiteUser u = users.get(0);
 
-        assertThat(u.getId()).isEqualTo(1L);
-        assertThat(u.getUsername()).isEqualTo("user1");
-        assertThat(u.getEmail()).isEqualTo("user1@test.com");
+        assertThat(u.getId()).isEqualTo(7L);
+        assertThat(u.getUsername()).isEqualTo("user7");
+        assertThat(u.getEmail()).isEqualTo("user7@test.com");
         assertThat(u.getPassword()).isEqualTo("{noop}1234");
     }
 
@@ -263,7 +263,7 @@ class UserRepositoryTests {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("특정회원의 follower들과 following들을 모두 알 수 있어야 한다.")
     @Rollback(false)
     void t15() {
         SiteUser u1 = userRepository.getQslUser(1L);
@@ -271,18 +271,20 @@ class UserRepositoryTests {
 
         u1.follow(u2);
 
-        // 힌트 SiteUser에 ManyToMany 필드를 하나더 만든다.
-
-        u1.getFollowers(); // []
-        u1.getFollowings(); // [u1]
-
-        u2.getFollowers(); // [u1]
-        u2.getFollowings(); // []
-
+        // follower
+        // u1의 구독자 : 0
         assertThat(u1.getFollowers().size()).isEqualTo(0);
+
+        // follower
+        // u2의 구독자 : 1
+        assertThat(u2.getFollowers().size()).isEqualTo(1);
+
+        // following
+        // u1이 구독중인 회원 : 1
         assertThat(u1.getFollowings().size()).isEqualTo(1);
 
-        assertThat(u2.getFollowers().size()).isEqualTo(1);
+        // following
+        // u2가 구독중인 회원 : 0
         assertThat(u2.getFollowings().size()).isEqualTo(0);
     }
 }
