@@ -27,7 +27,7 @@ public class SiteUser {
     private String email;
 
     @Builder.Default
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<InterestKeyword> interestKeywords = new HashSet<>();
 
     @Builder.Default
@@ -39,7 +39,7 @@ public class SiteUser {
     private Set<SiteUser> followings = new HashSet<>();
 
     public void addInterestKeywordContent(String keywordContent) {
-        interestKeywords.add(new InterestKeyword(keywordContent));
+        interestKeywords.add(new InterestKeyword(this, keywordContent));
     }
 
     public void follow(SiteUser following) {
@@ -47,7 +47,10 @@ public class SiteUser {
         if (following == null) return;
         if (this.getId() == following.getId()) return;
 
-        this.getFollowings().add(following);
+        // 유튜버(following)이 나(follower)를 구독자로 등록
         following.getFollowers().add(this);
+
+        // 내(follower)가 유튜버(following)를 구독한다.
+        getFollowings().add(following);
     }
 }
