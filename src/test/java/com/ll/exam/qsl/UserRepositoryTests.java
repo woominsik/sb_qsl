@@ -1,6 +1,5 @@
 package com.ll.exam.qsl;
 
-import com.ll.exam.qsl.interestKeyword.entity.InterestKeyword;
 import com.ll.exam.qsl.user.entity.SiteUser;
 import com.ll.exam.qsl.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -265,7 +264,6 @@ class UserRepositoryTests {
 
     @Test
     @DisplayName("특정회원의 follower들과 following들을 모두 알 수 있어야 한다.")
-    @Rollback(false)
     void t15() {
         SiteUser u1 = userRepository.getQslUser(1L);
         SiteUser u2 = userRepository.getQslUser(2L);
@@ -290,15 +288,24 @@ class UserRepositoryTests {
     }
 
     @Test
-    @DisplayName("u1은 더이상 농구에 관심이 없다.")
-    @Rollback(false)
+    @DisplayName("u1은 더 이상 농구에 관심이 없습니다.")
     void t16() {
         SiteUser u1 = userRepository.getQslUser(1L);
 
         u1.removeInterestKeywordContent("농구");
+    }
 
-        userRepository.save(u1);
+    @Test
+    @DisplayName("팔로우중인 사람들의 관심사")
+    void t17() {
+        SiteUser u = userRepository.getQslUser(8L);
 
-        assertThat(u1.getInterestKeywords()).doesNotContain(new InterestKeyword(u1,"농구"));
+        List<String> keywordContents = userRepository.getKeywordContentsByFollowingsOf(u);
+        assertThat(keywordContents.size()).isEqualTo(5);
+
+        u = userRepository.getQslUser(7L);
+
+        keywordContents = userRepository.getKeywordContentsByFollowingsOf(u);
+        assertThat(keywordContents.size()).isEqualTo(4);
     }
 }
